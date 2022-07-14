@@ -1,7 +1,9 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic import ListView, DetailView
 from .models import Card, Set
+from .forms import FormatForm
+
 # Create your views here.
 def home(request):
     return render(request, 'home.html')
@@ -15,9 +17,23 @@ def cards_index(request):
 
 def cards_detail(request, card_id):
     card = Card.objects.get(id=card_id)
+    # instantiate FormatForm to be rendered in the template
+    format_form = FormatForm()
     return render(request, 'cards/detail.html', { 
-        'card': card,
+        # pass the card and format_form as context
+        'card': card, 'format_form': format_form, 
         })
+
+def add_format(request, card_id):
+    # create the ModelForm using the data in the request.POST
+    form = FormatForm(request.POST)
+    # validate the form
+    if form.is_valid():
+        # dont save the form to the db until is had the card_id assigned
+        new_format = form.save(commit=False)
+        new_format.card_id = card_id
+        new_format.save()
+    return redirect('detail', card_id=card_id)
 
 class CardCreate(CreateView):
     model = Card

@@ -18,24 +18,39 @@
         </div>
     </div>
     <div class="col s6">
-        <form action="" method="post">
-        {% csrf_token %}
-        {{ format_form.as_p }}
-        <input type="submit" class="btn" value="Add Format">
+        <form action="{% url 'add_format' card.id %}" method="post">
+            {% csrf_token %}
+            {{ format_form.as_p }}
+            <input type="submit" class="btn" value="Add Format">
         </form>
         <table class="striped">
-        <thead>
-            <tr><th>Date</th><th>Format</th></tr>
-        </thead>
-        <tbody>
-            {% for format in card.format_set.all %}
-            <tr>
-                <td>{{format.date}}</td>
-                <td>{{format.get_formats_display}}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
+            <thead>
+                <tr><th>Date</th><th>Format</th></tr>
+            </thead>
+            <tbody>
+                {% for format in card.format_set.all %}
+                <tr>
+                    <td>{{format.date}}</td>
+                    <td>{{format.get_formats_display}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
         </table>
     </div>
 </div>
+<!-- JS to create a date picker and init the format dropdown -->
+<script>
+    // create a datepicker
+    let dateEl = document.getElementById('id_date');
+    M.Datepicker.init(dateEl, {
+      format: 'yyyy-mm-dd',
+      defaultDate: new Date(),
+      setDefaultDate: true,
+      autoClose: true
+    });
+  
+    // initialize the format select
+    let selectEl = document.getElementById('id_formats');
+    M.FormSelect.init(selectEl);
+  </script>
 {% endblock %}
