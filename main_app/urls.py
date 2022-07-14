@@ -8,4 +8,6 @@ urlpatterns = [
     path('about/', views.about, name='about'),
     # index route
     path('cards/', views.cards_index, name='index'),
+    # detail route
+    path('cards/<int:card_id>', views.cards_detail, name='detail'),
 ]
