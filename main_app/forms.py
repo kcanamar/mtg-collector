@@ -4,4 +4,4 @@ from .models import Format
 class FormatForm(ModelForm):
     class Meta:
         model = Format
-        fields = '__all__'
+        fields = ['date', 'formats']
