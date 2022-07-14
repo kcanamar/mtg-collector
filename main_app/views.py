@@ -17,11 +17,13 @@ def cards_index(request):
 
 def cards_detail(request, card_id):
     card = Card.objects.get(id=card_id)
+    # get the sets the card doesn't have
+    sets_card_doesnt_have = Set.objects.exclude(id__in = card.sets.all().values_list('id'))
     # instantiate FormatForm to be rendered in the template
     format_form = FormatForm()
     return render(request, 'cards/detail.html', { 
         # pass the card and format_form as context
-        'card': card, 'format_form': format_form, 
+        'card': card, 'format_form': format_form, 'sets': sets_card_doesnt_have,
         })
 
 def add_format(request, card_id):
