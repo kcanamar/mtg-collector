@@ -16,4 +16,14 @@ urlpatterns = [
     path('cards/<int:pk>/update/', views.CardUpdate.as_view(), name='cards_update'),
     # delete route for card
     path('cards/<int:pk>/delete/', views.CardDelete.as_view(), name='cards_delete'),
+    # route for seeing all sets
+    path('sets/', views.SetList.as_view(), name='sets_index'),
+    # route for inspecting a specific set
+    path('sets/<int:pk>/', views.SetDetail.as_view(), name='sets_detail'),
+    # route to create a set
+    path('sets/create/', views.SetCreate.as_view(), name='sets_create'),
+    # route to update a set
+    path('sets/<int:pk>/update/', views.SetUpdate.as_view(), name='sets_update'),
+    # route to delete a set
+    path('sets/<int:pk>/delete/', views.SetDelete.as_view(), name='sets_delete'),
 ]

@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h1>Sets List</h1>
+
+{% for set in set_list %}
+  <a href="{% url 'sets_detail' set.id %}">
+    <div class="card">
+        <div class="card-content">
+            <span class="card-title">{{ set.name }}</span>
+        </div>
+    </div>
+  </a>
+{% endfor %}
+
+{% endblock %}
