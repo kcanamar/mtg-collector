@@ -41,6 +41,7 @@ class Format(models.Model):
         choices=FORMAT,
         default=FORMAT[0][0]
     )
+    card = models.ForeignKey(Card, on_delete=models.CASCADE)
 
     def __str__(self):
         return f'{self.get_formats_display()} on {self.date}'
