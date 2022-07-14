@@ -51,7 +51,7 @@
               </span>
             </div>
             <div class="card-action">
-              <form action="" method="post">
+              <form action="{% url 'remove_set' card.id set.id %}" method="post">
                 {% csrf_token %}
                 <button type="submit" class="btn">Remove</button>
               </form>
@@ -73,7 +73,7 @@
                 </span>
               </div>
               <div class="card-action">
-                <form action="" method="post">
+                <form action="{% url 'assoc_set' card.id set.id %}" method="post">
                   {% csrf_token %}
                   <button type="submit" class="btn">Add</button>
                 </form>

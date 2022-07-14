@@ -16,8 +16,12 @@ urlpatterns = [
     path('cards/<int:pk>/update/', views.CardUpdate.as_view(), name='cards_update'),
     # delete route for card
     path('cards/<int:pk>/delete/', views.CardDelete.as_view(), name='cards_delete'),
-    # route for adding a Format
+    # route for adding a Format 1:M
     path('cards/<int:card_id>/add_format/', views.add_format, name='add_format'),
+    # route for associating a set to a card M:M
+    path('cards/<int:card_id>/assoc_set/<int:set_id>/', views.assoc_set, name='assoc_set'),
+    # route for removing a set from a card
+    path('cards/<int:card_id>/remove_set/<int:set_id>/', views.remove_set, name='remove_set'),
     # route for seeing all sets
     path('sets/', views.SetList.as_view(), name='sets_index'),
     # route for inspecting a specific set

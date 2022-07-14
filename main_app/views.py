@@ -26,6 +26,14 @@ def cards_detail(request, card_id):
         'card': card, 'format_form': format_form, 'sets': sets_card_doesnt_have,
         })
 
+def assoc_set(request, card_id, set_id):
+    Card.objects.get(id=card_id).sets.add(set_id)
+    return redirect('detail', card_id=card_id)
+
+def remove_set(request, card_id, set_id):
+    Card.objects.get(id=card_id).sets.remove(set_id)
+    return redirect('detail', card_id=card_id)
+    
 def add_format(request, card_id):
     # create the ModelForm using the data in the request.POST
     form = FormatForm(request.POST)
