@@ -6,5 +6,6 @@ urlpatterns = [
     path('', views.home, name='home'),
     # about route
     path('about/', views.about, name='about'),
-    
+    # index route
+    path('cards/', views.cards_index, name='index'),
 ]

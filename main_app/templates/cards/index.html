@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h1>Card List</h1>
+
+{% for card in cards %}
+  <div class="card">
+
+      <div class="card-content">
+        <span class="card-title">{{ card.name }}</span>
+        <p>Type: {{ card.type }}</p>
+        <p>Description: {{ card.description }}</p>
+        <p>Power/Toughness: {{ card.power }}/{{ card.toughness }}</p>
+      </div>
+
+  </div>
+{% endfor %}
+
+{% endblock %}
