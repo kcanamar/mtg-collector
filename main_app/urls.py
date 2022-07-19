@@ -18,6 +18,8 @@ urlpatterns = [
     path('cards/<int:pk>/delete/', views.CardDelete.as_view(), name='cards_delete'),
     # route for adding a Format 1:M
     path('cards/<int:card_id>/add_format/', views.add_format, name='add_format'),
+    # route for adding a photo
+    path('cards/<int:card_id>/add_photo/', views.add_photo, name='add_photo'),
     # route for associating a set to a card M:M
     path('cards/<int:card_id>/assoc_set/<int:set_id>/', views.assoc_set, name='assoc_set'),
     # route for removing a set from a card

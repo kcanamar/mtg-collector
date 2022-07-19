@@ -6,10 +6,13 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-# import uuid
-# import boto3
+import uuid
+import boto3
 from .models import Card, Set, Photo
 from .forms import FormatForm
+
+S3_BASE_URL = 'https://s3.us-west-2.amazonaws.com/'
+BUCKET = 'mtgcollector-karc-90'
 
 # Create your views here.
 def home(request):
@@ -70,6 +73,31 @@ def add_format(request, card_id):
         new_format.save()
     return redirect('detail', card_id=card_id)
 
+@login_required
+def add_photo(request, card_id):
+    card = Card.objects.get(id=card_id, user=request.user)
+    if not card.user == request.user:
+        return redirect('home')
+    # photo-file will be the 'name' attribute on the <input type='file'>
+    photo_file = request.FILES.get('photo-file', None)
+    print(f"this is photo_file -->> {photo_file}")
+    if photo_file:
+        s3 = boto3.client('s3')
+        print(f"this is s3 -->> {s3}")
+        # need a unique 'key for s3 / needs file extension
+        key = uuid.uuid4().hex[:6] + photo_file.name[photo_file.name.rfind('.'):]
+        print(f"this is key -->> {key}")
+        # error handling
+        try:
+            s3.upload_fileobj(photo_file, BUCKET, key)
+            url = f"{S3_BASE_URL}{BUCKET}/{key}"
+            photo = Photo(url=url, card_id=card_id)
+            print(f"this is photo in try block -->> {photo}")
+            photo.save()
+        except:
+            print('An error occured')
+    return redirect('detail', card_id=card_id)
+
 def signup(request):
     error_message = ''
     if request.method == "POST":
@@ -114,7 +142,7 @@ class CardDelete(LoginRequiredMixin, DeleteView):
         if not card.user == self.request.user:
             return redirect('home')
         return card
-        
+
 ####################
 ## Set Views
 ####################
