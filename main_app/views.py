@@ -1,7 +1,14 @@
+from django.http import Http404
 from django.shortcuts import render, redirect
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic import ListView, DetailView
-from .models import Card, Set
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import login
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+# import uuid
+# import boto3
+from .models import Card, Set, Photo
 from .forms import FormatForm
 
 # Create your views here.
@@ -11,12 +18,16 @@ def home(request):
 def about(request):
     return render(request, 'about.html')
 
+@login_required
 def cards_index(request):
-    cards = Card.objects.all()
+    cards = Card.objects.filter(user=request.user)
     return render(request, 'cards/index.html', { 'cards': cards})
 
+@login_required
 def cards_detail(request, card_id):
-    card = Card.objects.get(id=card_id)
+    card = Card.objects.get(id=card_id, user=request.user)
+    if not card.user == request.user:
+        return redirect('home')
     # get the sets the card doesn't have
     sets_card_doesnt_have = Set.objects.exclude(id__in = card.sets.all().values_list('id'))
     # instantiate FormatForm to be rendered in the template
@@ -26,15 +37,29 @@ def cards_detail(request, card_id):
         'card': card, 'format_form': format_form, 'sets': sets_card_doesnt_have,
         })
 
+@login_required
 def assoc_set(request, card_id, set_id):
-    Card.objects.get(id=card_id).sets.add(set_id)
+    card = Card.objects.get(id=card_id, user=request.user)
+    if not card.user == request.user:
+        return redirect('home')
+    card.sets.add(set_id)
     return redirect('detail', card_id=card_id)
 
+
+@login_required
 def remove_set(request, card_id, set_id):
-    Card.objects.get(id=card_id).sets.remove(set_id)
+    card = Card.objects.get(id=card_id, user=request.user)
+    if not card.user == request.user:
+        return redirect('home')
+    card.sets.remove(set_id)
     return redirect('detail', card_id=card_id)
-    
+
+
+@login_required
 def add_format(request, card_id):
+    card = Card.objects.get(id=card_id, user=request.user)
+    if not card.user == request.user:
+        return redirect('home')
     # create the ModelForm using the data in the request.POST
     form = FormatForm(request.POST)
     # validate the form
@@ -45,37 +70,69 @@ def add_format(request, card_id):
         new_format.save()
     return redirect('detail', card_id=card_id)
 
-class CardCreate(CreateView):
+def signup(request):
+    error_message = ''
+    if request.method == "POST":
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('home')
+        else:
+            error_message = 'Invalid sign up - try again'
+    form = UserCreationForm()
+    context = {'form': form, 'error_message': error_message}
+    return render(request, 'registration/signup.html', context)
+        
+class CardCreate(LoginRequiredMixin, CreateView):
     model = Card
-    fields = '__all__'
+    fields = ['name', 'type', 'power', 'toughness', 'description']
+
+    def form_valid(self, form):
+        # assign the logged in user (self.request.user)
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+
+class CardUpdate(LoginRequiredMixin, UpdateView):
+    model = Card
+    fields = ['name', 'type', 'description', 'power', 'toughness']
+
+    def get_object(self, queryset=None):
+        """ Hook to ensure object is owned by request.user. """
+        card = super(CardUpdate, self).get_object()
+        if not card.user == self.request.user:
+            return redirect('home')
+        return card
+
+class CardDelete(LoginRequiredMixin, DeleteView):
+    model = Card
     success_url = '/cards/'
 
-class CardUpdate(UpdateView):
-    model = Card
-    fields = ['type', 'description', 'power', 'toughness']
-
-class CardDelete(DeleteView):
-    model = Card
-    success_url = '/cards/'
-
+    def get_object(self, queryset=None):
+        """ Hook to ensure object is owned by request.user. """
+        card = super(CardUpdate, self).get_object()
+        if not card.user == self.request.user:
+            return redirect('home')
+        return card
+        
 ####################
 ## Set Views
 ####################
-class SetList(ListView):
+class SetList(LoginRequiredMixin, ListView):
   model = Set
 
-class SetDetail(DetailView):
+class SetDetail(LoginRequiredMixin, DetailView):
   model = Set
 
-class SetCreate(CreateView):
+class SetCreate(LoginRequiredMixin, CreateView):
   model = Set
   fields = '__all__'
   success_url = '/sets/'
 
-class SetUpdate(UpdateView):
+class SetUpdate(LoginRequiredMixin, UpdateView):
   model = Set
   fields = '__all__'
 
-class SetDelete(DeleteView):
+class SetDelete(LoginRequiredMixin, DeleteView):
   model = Set
   success_url = '/sets/'

@@ -20,11 +20,17 @@
         </ul>
         <ul class="right">
           {% comment %} important to include the leading / in th HTML {% endcomment %}
-          <li><a href="{% url 'about' %}">About</a></li>          
-          <li><a href="{% url 'sets_create' %}">Add a Set</a></li>
-          <li><a href="{% url 'sets_index' %}">View All Sets</a></li>
-          <li><a href="{% url 'cards_create' %}">Add a Card</a></li>
-          <li><a href="{% url 'index' %}">View All My Cards</a></li>
+          <li><a href="{% url 'about' %}">About</a></li> 
+          {% if user.is_authenticated %}         
+            <li><a href="{% url 'sets_create' %}">Add a Set</a></li>
+            <li><a href="{% url 'sets_index' %}">View All Sets</a></li>
+            <li><a href="{% url 'cards_create' %}">Add a Card</a></li>
+            <li><a href="{% url 'index' %}">View All My Cards</a></li>
+            <li><a href="{% url 'logout' %}">Log Out</a></li>
+          {% else %}
+            <li><a href="{% url 'signup' %}">Sign Up</a></li>
+            <li><a href="{% url 'login' %}">Log In</a></li>
+          {% endif %}
         </ul>
       </div>
     </nav>

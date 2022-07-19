@@ -32,4 +32,6 @@ urlpatterns = [
     path('sets/<int:pk>/update/', views.SetUpdate.as_view(), name='sets_update'),
     # route to delete a set
     path('sets/<int:pk>/delete/', views.SetDelete.as_view(), name='sets_delete'),
+    # signup route
+    path('accounts/signup/', views.signup, name='signup'),
 ]

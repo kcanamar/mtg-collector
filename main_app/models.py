@@ -1,5 +1,7 @@
 from django.db import models
 from django.urls import reverse
+from django.contrib.auth.models import User
+
 # Create your models here.
 class Set(models.Model):
     name = models.CharField(max_length=100)
@@ -17,6 +19,7 @@ class Card(models.Model):
     power = models.IntegerField()
     toughness = models.IntegerField()
     sets = models.ManyToManyField(Set)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
@@ -49,3 +52,10 @@ class Format(models.Model):
         return f'{self.get_formats_display()} on {self.date}'
     class Meta:
         ordering = ['-date']
+
+class Photo(models.Model):
+    url = models.CharField(max_length=200)
+    cat = models.ForeignKey(Card, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"Photo for card_id: {self.card_id} @{self.url}"
