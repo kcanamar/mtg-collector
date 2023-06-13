@@ -9,11 +9,11 @@
       <div class="card-content">
         <span class="card-title">{{ set.name }}</span>
       </div>
-      <div class="card-action">
-        <a href="{% url 'sets_update' set.id %}">Edit</a>
-        <a href="{% url 'sets_delete' set.id %}">Delete</a>
-      </div>
     </div>
   </div>
 </div>
 {% endblock %}
+<div class="card-action">
+  <a href="{% url 'sets_update' set.id %}">Edit</a>
+  <a href="{% url 'sets_delete' set.id %}">Delete</a>
+</div>

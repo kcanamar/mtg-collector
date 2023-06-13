@@ -138,7 +138,7 @@ class CardDelete(LoginRequiredMixin, DeleteView):
 
     def get_object(self, queryset=None):
         """ Hook to ensure object is owned by request.user. """
-        card = super(CardUpdate, self).get_object()
+        card = super(CardDelete, self).get_object()
         if not card.user == self.request.user:
             return redirect('home')
         return card
